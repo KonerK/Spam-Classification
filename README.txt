@@ -1,0 +1,26 @@
+AI Semester 2 Second Coursework - Classifier
+
+The notebook supplied is my attempt at Semester 2 Coursework 2 for AI. The first part of the coursework has been completed: I have created a classifier to distinguish between spam and ham. The same classifier has also been used in the second part of the coursework, but features have not been extracted well enough to generate a high accuracy. 
+
+Part 1 - Spam Filtering, The Code
+
+For part 1 of the coursework, I implemented a Naive Bays algorithm to classify the data between spam and ham, following the naive bayes notebook as a guide. Naive bays is simply a supervised learning algorithm used in classification problems. 
+
+The class MyClassifier that I have coded contains 5 methods: init, estimate_log_class_priors, estimate_log_class_conditional_likelihoods, train, and predict. When MyClassifier is declared, it takes in one parameter, which represents the number of class labels for the data. I did this so that we can use this classifier for any number of class labels. For classifying spam, this parameter would be 2, as we have two class labels: spam or ham. 
+
+In the constructor 'init', I initialise the fields for the class: log_class_priors and theta.
+
+In estimate_log_class_priors, we calculate the values to be held in log_class_priors, which simply stores the values of P(C=c), where c is a class label. We take as a parameter a data set with binary response variables. We use this to store the logarithm of the proportions of class labels in the data set. For example, if we are given a data set with binary response variables 0 and 1, to calculate P(C=0) from this set we carry out the following computation: (the no. of zeros in the set)/(total size of the data set). In fact, the logarithm of this value is taken, which is done for a multitude of reasons: a normal probability is between 0 and 1, the log-probability allows the probabilities to be in a wider range, negative infinity to zero, and also because the maths works out nicer, as the in the end when we are calculating our final probability to decide whether something is spam/ham we will work with summations rather than products.  
+
+In estimate_log_class_conditional_likelihoods, we calculate the values to be held in theta, which stores the (log of) probabilities that a feature will appear in a certain class. To do this, we take in three parameters: input_data, labels and alpha. Input_data represents email samples, which contain certain features, while labels contains the labels for the email samples (spam/ham). Alpha is an integer which represents whether we use Laplace smoothing or not. For this classifier, I have set alpha=1 so that Laplace smoothing is being used. So, in this method, we find P(a|b), which is simply the probability of a feature b given a class a. We do this by calculating (count(a/b) + alpha)/count(b)+ (alpha*total_num_of_features), for every feature b for every class a. Note that we actually take the log of this value, for the same reason we took log previously.
+
+In the train method, we simply call the above two methods with the appropriate sets of data to set the values for log_class_priors and theta. As parameters, we take in train_data and train_labels, which are supplied to estimate_log_class_priors and estimate_log_class_conditional_likelihoods so that they can compute the values for log_class_priors and theta respectively. 
+
+Finally, these values are used in the predict method, where we calculate the probability that a given sample is spam or ham. Once we have used the train method, this is relatively simple to calculate. For example, in calculating the probability that a sample is spam, we check the features that appear in the sample and then add the probabilities of those features appearing in spam (that we have already calculated using estimate_log_class_conditional_likelihoods). Lastly, we add the probability P(C=c) from estimate_log_class_priors, which for spam would be P(C=1). We do the same calculation to calculate the probability that the sample is ham. Then we can compare the two probabilities, whichever is higher is predicted to be the class of the sample. 
+
+Using the test data provided, an accuracy of 83.6% was reached, which indicates to me that the naive bayes algorithm is likely to have been implemented correctly. I am happy with this result, but given the training data size of 1000, I do not actually think this is appropriately high enough to be as confident in the classifier as I would like to be. Also, in the real world I imagine that this accuracy would not be good enough, but rather we would want an accuracy over 90%. On the hidden test data, I predict an accuracy of approximately around 80%. 
+
+
+Part 2 - Digit Classification 
+
+Since the algorithm has also been implemented in such a way so that in can accept an arbitrary number of input features and class labels, we can use the MyClassifier class to classify the digits as well. From experimenting with the BetterFeatureExtractor method, I was able to improve the accuracy of classifying the digits by 6% from using the BasicFeatureExtractor method, by making any pixel that is near the colour white be noted as white (1) and everything else is considered black (0). This was effectively done through experimentation. 
